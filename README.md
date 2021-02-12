@@ -96,7 +96,30 @@ Output from query 2:
 
 Time: 0.582 ms
 ```
+---
 
+Query 3
+```sql
+-- aggregate the one-to-many into columns
+select 
+  m.id, 
+  string_agg(distinct a.name, ',') as aname,
+  string_agg(distinct b.name, ',') as bname, 
+  string_agg(distinct c.name, ',') cname
+from main m 
+left join child_a a on m.id = a.parent
+left join child_b b on m.id = b.parent
+left join child_c c on m.id = c.parent
+    where m.id = 1
+group by m.id;
+```
+```
+| id  | aname             | bname             | cname             |
+| --- | ----------------- | ----------------- | ----------------- |
+| 1   | 1.a.1,1.a.2,1.a.3 | 1.b.1,1.b.2,1.b.3 | 1.c.1,1.c.2,1.c.3 |
+ 
+ Time: 2ms
+```
 ## Setup
 
 ### Create Database
